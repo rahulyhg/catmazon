@@ -119,7 +119,7 @@ include 'app/include/navbar.php';
         <span class="input-group-addon"><span
     class="glyphicon glyphicon-asterisk secondary-color"></span></span>
         <input type="password"  required id="password"
-          placeholder="Password" class="form-control" name="password">
+          placeholder="Password" class="form-control" name="password" pattern=".{6,15}" title="Must be between 6 and 15 characters.">
       </div>
       <br>
 
@@ -128,7 +128,7 @@ include 'app/include/navbar.php';
         <span class="input-group-addon"><span
     class="glyphicon glyphicon-ok secondary-color"></span></span>
         <input type="password"  required id="confirmPassword"
-          placeholder="Confirm Password" class="form-control">
+          placeholder="Confirm Password" class="form-control" pattern=".{6,15}" title="Must be between 6 and 15 characters.">
       </div>
       <br>
 
@@ -155,7 +155,7 @@ include 'app/include/navbar.php';
           <span class="input-group-addon">
             <span class="glyphicon glyphicon-calendar secondary-color"></span>
           </span>
-          <input type="date" required id="birthDate" placeholder="Birth Date" class="form-control" name="birth_date"/>
+          <input type="date" required id="birthDate" placeholder="Birth Date" class="form-control" name="birth_date" max="<?=date('Y-m-d', strtotime('-18 years'))?>" min="<?=date('Y-m-d', strtotime('-101 years'))?>"/>
       </div>
       <br>
       
