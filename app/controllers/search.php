@@ -23,20 +23,22 @@ class search extends Controller {
         }
     }
 
-    public function brands($string)
+   public function brands($string)
     {
-        $_SESSION['searchString'] = strtolower('%'.$string.'%');
+        $_SESSION['searchString'] = ($string);
         $this->view('home/searchResults');
     }
-
+    
     public function loadProducts(){
         $productList = $this->effectuateSearch();
         $return = '';
+
         if (count($productList) == 0){
             $return = "Sorry, we have no products to show with this criteria.";
         }
 
         $images = $this->model('images');
+        
         foreach ($productList as $key => $value) {
         $assoc_array["product_id"] = $value->id;
         $img_list = $images->where($assoc_array);
@@ -95,8 +97,7 @@ class search extends Controller {
     }
 
     public function filterBy($column, $searchKey){
-        $_SESSION['filterBy'] = true;
-        $return = '';
+        $_SESSION['filterBy'] = 1;
         if ($column == 'discounted_price'){
                 $_SESSION['filterByPrice'] = true;
                 $lohi = explode('_', $searchKey);
@@ -123,12 +124,12 @@ class search extends Controller {
         }
         if (isset( $_SESSION['filterByCategory']))
         {
-            array_push($this->array, $_SESSION["filterByCategory"]);
+            array_push($this->array, $_SESSION['filterByCategory']);
             $return .= 'category_id = ? ';
             if (isset( $_SESSION['filterByRating'])) $return .= 'AND ';
         }
         if (isset( $_SESSION['filterByRating'])) {
-            array_push($this->array, $_SESSION["filterByRating"]);
+            array_push($this->array, $_SESSION['filterByRating']);
             $return .= 'avg_rating > ? ';
         }
         return $return;
@@ -136,6 +137,7 @@ class search extends Controller {
 
     public function orderBy(){
         if (isset($_POST['orderBy'])){
+            $_SESSION["selectedOrder"] = $_POST['orderBy'];
             $orderBy = explode('Z', $_POST['orderBy']);
             $_SESSION["orderBy"] = $orderBy[0];
             $_SESSION["ascOrDesc"] = $orderBy[1];
@@ -161,7 +163,7 @@ class search extends Controller {
         $this->SQL = ' ';
         if (isset($_SESSION['searchString'])){
             array_push($this->array, $_SESSION['searchString'], $_SESSION['searchString'], $_SESSION['searchString']);
-            $this->SQL .= 'WHERE LOWER(title) LIKE ? OR LOWER(brand) LIKE ? OR LOWER(description) LIKE ? ';
+            $this->SQL .= 'WHERE (LOWER(title) LIKE ? OR LOWER(brand) LIKE ? OR LOWER(description) LIKE ? )';
             if (isset($_SESSION['filterBy'])){
                 $this->SQL .= 'AND '.$this->getFilterSQL();
             }
@@ -172,11 +174,13 @@ class search extends Controller {
         if (isset($_SESSION['orderBy']))
             $this->SQL .= $this->orderBy();
         
-        // echo ' session: ';
-        // print_r($_SESSION);
-        // echo ' SQL: ';
-        // print_r($this->SQL);
-        
+//         echo ' session: ';
+//         print_r($_SESSION);
+//         echo ' this array: ';
+//         print_r($this->array);
+//         echo ' SQL: ';
+//         print_r($this->SQL);
+//        
         return $products->preparedStmt($this->SQL, $this->array);
     }
 }

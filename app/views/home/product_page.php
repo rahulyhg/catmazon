@@ -100,18 +100,8 @@ include 'app/include/navbar.php';
                                         Quantity
                                     </div>
                                     <div>
-                                        <select required id="cost"
-                                    placeholder="Amount" class="form-control" name="addQuantity">
-                                            <option value="1">1</option>
-                                            <option value="1">2</option>
-                                            <option value="1">3</option>
-                                            <option value="1">4</option>
-                                            <option value="1">5</option>
-                                            <option value="1">6</option>
-                                            <option value="1">7</option>
-                                            <option value="1">8</option>
-                                            <option value="1">9</option>
-                                        </select>
+                                        <input style="max-width: 70%"type="number" id="quantity" required class="form-control"   name="addQuantity" min="0" max="<?php if ($this->product->quantity_in_stock > 9): ?>9<?php else: ?><?=$this->product->quantity_in_stock?><?php endif ?>">
+                                        
                                         <input type="text" name="addId" hidden value="<?=$this->productId?>">
                                     </div>
                                 </div>
@@ -119,10 +109,10 @@ include 'app/include/navbar.php';
                             <hr>
 
                             <button type="submit" class="btn btn-info center-block" name="addBtn" 
-                            <<?php if (isset($_SESSION['activeUser'])): ?>
-                              > Add to <span class="glyphicon glyphicon-shopping-cart" >  
-                            <?php elseif ($this->product->quantity_in_stock == 0): ?>
+                            <?php if ($this->product->quantity_in_stock == 0): ?>
                                 disabled> Product out of stock.
+                            <?php elseif (isset($_SESSION['activeUser'])): ?>
+                              > Add to <span class="glyphicon glyphicon-shopping-cart" >  
                             <?php else: ?>
                                disabled> Log in to add products to your cart.
                             <?php endif ?></span></button>

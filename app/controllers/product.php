@@ -101,6 +101,21 @@ class product extends Controller {
         $rating->user_id = $_SESSION['activeUser'];
         if (!($rating->where(array('user_id'=>$_SESSION['activeUser'],'product_id'=>$this->productId)))){
             $rating->insert();
+            switch ($_POST['selectRating']){
+                case 1: $this->product->one_star = $this->product->one_star +1;
+                break;
+                case 2: $this->product->two_star = $this->product->two_star +1;
+                break;
+                case 3: $this->product->three_star = $this->product->three_star +1;
+                break;
+                case 4: $this->product->four_star = $this->product->four_star +1;
+                break;
+                case 5: $this->product->five_star = $this->product->five_star +1;
+                break;
+            }
+            $rating_count = $rating->where(array('product_id'=>$this->productId))->star_rating;
+            print_r($rating_count);
+//            this->product>avg_rating = array_sum($rating_count) / count($rating_count);
         }
         else {
             $message = "You are only allowed one comment per product";

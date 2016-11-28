@@ -3,7 +3,7 @@
 class order extends Controller {
 	public function index () {
 
-		$this->view('users/checkout');
+		$this->view('users/orders');
 		home::unsetSearch();
 	}
 }

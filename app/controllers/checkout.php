@@ -54,6 +54,7 @@ class checkout extends Controller {
         foreach($address_list as $address){
             $return .= '<option value="'.$address->id.'">'.$address->street.'</option>';
         }
+        //echo $return;
         return $return;
     }
     
@@ -75,83 +76,108 @@ class checkout extends Controller {
         $cart_list = $cart_list->where($assoc_array);
         $return = '';
         foreach($cart_list as $cart){
-            $product = $this->model('products');
-            $product = $product->find($cart->product_id);
-            
-            // table gen
-            $return .= '<tr id="cartDetails'.$cart->id.'">';
-            
-            //prod name col
-            $return .= '<td id="productName'.$cart->id.'"><a id="link'.$product->id.'" href="/product/'.$product->id.'">';
-            $return .= $product->title.'';
-            $return .= '</a></td>';
-            
-            //quantity col
-            $return .= '<td id="quantity'.$cart->id.'" class="text-center">';
-            $return .= $cart->quantity.'';
-            $return .= '</td>';
-            
-            //price col
-            $return .= '<td id="price'.$cart->id.'" class="text-center">CDN$ ';
-            $return .= number_format((float)$product->price, 2, '.', '');
-            $return .= '</td>';
-            
-            //discount col
-            $return .= '<td id="discount'.$cart->id.'" class="text-center">';
-            $return .= number_format((float)$product->discount, 2, '.', '');
-            $return .= '%</td>';
-            
-            //discounted price col
-            $return .= '<td id="discountedPrice'.$cart->id.'" class="text-center">CDN$ ';
-            $return .= number_format((float)$product->discounted_price, 2, '.', '');
-            $return .= '</td>';
-            
-            $return .= '</tr>';
+            if ($cart->quantity > 0){
+                $product = $this->model('products');
+                $product = $product->find($cart->product_id);
+
+                // table gen
+                $return .= '<tr id="cartDetails'.$cart->id.'">';
+
+                //prod name col
+                $return .= '<td id="productName'.$cart->id.'"><a id="link'.$product->id.'" href="/product/'.$product->id.'">';
+                $return .= $product->title.'';
+                $return .= '</a></td>';
+
+                //quantity col
+                $return .= '<td id="quantity'.$cart->id.'" class="text-center">';
+                $return .= $cart->quantity.'';
+                $return .= '</td>';
+
+                //price col
+                $return .= '<td id="price'.$cart->id.'" class="text-center">CDN$ ';
+                $return .= number_format((float)$product->price, 2, '.', '');
+                $return .= '</td>';
+
+                //discount col
+                $return .= '<td id="discount'.$cart->id.'" class="text-center">';
+                $return .= number_format((float)$product->discount, 2, '.', '');
+                $return .= '%</td>';
+
+                //discounted price col
+                $return .= '<td id="discountedPrice'.$cart->id.'" class="text-center">CDN$ ';
+                $return .= number_format((float)$product->discounted_price, 2, '.', '');
+                $return .= '</td>';
+
+                $return .= '</tr>';
+            }
         }
         
         return $return;
     }
-    
+    public $finalSaleID = 1;
     public function confirmSale(){
-        $address_id = $_POST['chooseAddress'];
-        $payment_id = $_POST['choosePayment'];
-        $user_id    = $_SESSION['activeUser'];
-        $date = getDate();
-        $sale_date  = $date['year'].'/'.$date['mon'].'/'.$date["mday"];
-        
-        $sale = $this->model('sales');
-        $sale->user_id    = $user_id;
-        $sale->payment_id = $payment_id;
-        $sale->address_id = $address_id;
-        $sale->sale_date  = $sale_date;
-        
-        $sale->insert();
+        if (isset($_POST['chooseAddress'])){
+            $address_id = $_POST['chooseAddress'];
+            $payment_id = $_POST['choosePayment'];
+            $user_id    = $_SESSION['activeUser'];
+            $date = getDate();
+            $sale_date  = $date['year'].'/'.$date['mon'].'/'.$date["mday"].' '.$date['hours'].':'.$date['minutes'].':'.$date['seconds']; 
+            $sale = $this->model('sales');
+            $sale->user_id    = $user_id;
+            $sale->payment_id = $payment_id;
+            $sale->address_id = $address_id;
+            $sale->sale_date  = $sale_date;
+           
+            $sale->insert();
 
-        $cart_list = $this->model('cart_details');
-        $assoc_array['user_id'] = $_SESSION['activeUser'];
-        $cart_list = $cart_list->where($assoc_array);
-        
-        $added_sale = $this->model('sales');
-        $arr['user_id'] = $user_id;
-        $arr['payment_id'] = $payment_id;
-        $arr['address_id'] = $address_id;
-        $added_sale = $added_sale->where($arr);
-        
-        $sale_id = $added_sale->id;
-        
-        foreach($cart_list as $cart){
-            $sale_detail = $this->model('sale_details');
-            $product = $this->model('products');
-            $product = $product->find($cart->product_id);
+            $cart_list = $this->model('cart_details');
+            $assoc_array['user_id'] = $_SESSION['activeUser'];
+            $cart_list = $cart_list->where($assoc_array);
             
-            $sale_detail->sale_id = $sale_id;
-            $sale_detail->product_id = $product->id;
-            $sale_detail->quantity = $cart->quantity;
-            $sale_detail->price = $product->price;
-            $sale_detail->discounted_price = $product->discounted_price;
-            $sale_detail->discount= $product->discount;
+            $added_sale = $this->model('sales');
+            $arr['user_id'] = $user_id;
+            $arr['payment_id'] = $payment_id;
+            $arr['address_id'] = $address_id;
+            $arr['sale_date'] = $sale_date;
+
+            $added_sale = $added_sale->where($arr);
+
+            $sale_id = $added_sale[0]->id;
             
-            $sale_detail->insert();
+            $this->finalSaleID = $sale_id;
+
+            foreach($cart_list as $cart){
+                if ($cart->quantity > 0){
+                    $sale_detail = $this->model('sale_details');
+                    $product = $this->model('products');
+                    $product = $product->find($cart->product_id);
+
+                    $sale_detail->sale_id = $sale_id;
+                    $sale_detail->product_id = $product->id;
+                    $sale_detail->quantity = $cart->quantity;
+                    $sale_detail->price = $product->price;
+                    $sale_detail->discounted_price = $product->discounted_price;
+                    $sale_detail->discount= $product->discount;
+
+                    $sale_detail->insert();
+                }
+                    $cart->delete();
+            }
         }
+        $this->view('users/paymentSuccessful');
+    }
+
+    public function orderDetails()
+    {
+        return '<div class="container">
+            <div class="jumbotron imaged-jumbo" style="background: #000 url(\'//c4.staticflickr.com/7/6092/6330704947_dd7e1b453c_b.jpg\') center center;">
+                <div class="transparent-underlay">
+                    <h1>Order completed!</h1>
+                    <p class="secondary-color">Your order receipt is number '.$this->finalSaleID.'</p>
+
+                </div>
+            </div>  
+        </div>';
+
     }
 }

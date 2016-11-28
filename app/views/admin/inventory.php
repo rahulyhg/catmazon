@@ -13,7 +13,7 @@ include 'app/include/navbar.php';
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Search Product ID" name="searchString" id="srch-term">
                 <div class="input-group-btn">
-                    <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search secondary-color secondary-border-color secondary-hover"></i></button>
+                    <button class="btn btn-info" type="submit"><i class="glyphicon glyphicon-search"></i></button>
                 </div>
             </div>
         </form>
@@ -92,7 +92,7 @@ include 'app/include/navbar.php';
                     <!-- <p>This sweet piece should take the given images and upload them to the images db for this specific product id</p>
                     <a href="http://www.w3schools.com/php/php_file_upload.asp" >Click here for PHP instructions</a> -->
                     
-                    <label for="image"></label>
+                    <label for="productImage"></label>
                     <input type="file" name="image" accept="image/*" id="image">
                     
                     <hr>

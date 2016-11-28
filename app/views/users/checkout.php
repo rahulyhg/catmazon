@@ -2,9 +2,6 @@
 <html lang="en">
     <head>
         <title>Checkout</title>
-        <?php
-        include 'app/include/navbar.php';  
-        ?>
         <script type="text/javascript">
             function changeCardType(){
                 var paymentID = $('#card_type').val();
@@ -36,6 +33,9 @@
                 $('#card_number').val("");
             }
         </script>
+        <?php
+        include 'app/include/navbar.php';  
+        ?>
         <div class="modal fade" id="paymentModal">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -141,7 +141,7 @@
                                 <label for="chooseAddress" class="sr-only">State</label>
                                 <span class="input-group-addon">Choose a Different Address</span>
                                 <select id="chooseAddress"  name="chooseAddress" required class="form-control" style="width: auto;">
-                                    <?=$this->loadAddresses();?>
+                                    <?=$this->loadAddresses()?>
                                 </select>
                             </div>
                             <br>
@@ -158,7 +158,7 @@
                                         <span class="input-group-addon">Choose a Card</span>
                                         <select id="choosePayment" name="choosePayment" onchange="" required class="form-control" style="width: auto;">
                                             
-                                            <?=$this->loadPayment();?>
+                                            <?=$this->loadPayment()?>
                                         </select>
                                     </div>
                                 </div>

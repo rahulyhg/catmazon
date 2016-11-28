@@ -72,14 +72,14 @@ include 'app/include/navbar.php';
               <form method="POST" action="/search/orderBy">
                 Sort by: 
                 <select name="orderBy" id="orderBy">
-                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'titleZasc' ? "selected" : '')?> value="titleZasc">Name - Ascending</option>
-                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'titleZdesc' ? "selected" : '')?> value="titleZdesc">Name - Descending</option>
-                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'avg_ratingZdesc' ? "selected" : '')?> value="avg_ratingZdesc">Rating - Descending</option>
-                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'avg_ratingZasc' ? "selected" : '')?> value="avg_ratingZasc">Rating - Ascending</option>
-                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'priceZasc' ? "selected" : '')?> value="priceZasc">Price - Ascending</option>
-                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'priceZdesc' ? "selected" : '')?> value="priceZdesc">Price - Descending</option>
-                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'brandZasc' ? "selected" : '')?> value="brandZasc">Brand - Ascending</option>
-                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'brandZdesc' ? "selected" : '')?> value="brandZdesc">Brand - Descending</option>
+                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'titleZasc' ? "selected" : '');?> value="titleZasc">Name - Ascending</option>
+                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'titleZdesc' ? "selected" : '');?> value="titleZdesc">Name - Descending</option>
+                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'avg_ratingZdesc' ? "selected" : '');?> value="avg_ratingZdesc">Rating - Descending</option>
+                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'avg_ratingZasc' ? "selected" : '');?> value="avg_ratingZasc">Rating - Ascending</option>
+                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'priceZasc' ? "selected" : '');?> value="priceZasc">Price - Ascending</option>
+                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'priceZdesc' ? "selected" : '');?> value="priceZdesc">Price - Descending</option>
+                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'brandZasc' ? "selected" : '');?> value="brandZasc">Brand - Ascending</option>
+                    <option <?php if (isset($_SESSION['selectedOrder'])) echo($_SESSION['selectedOrder'] == 'brandZdesc' ? "selected" : '');?> value="brandZdesc">Brand - Descending</option>
                 </select>
                 <input type="submit" value="Go" name="orderByButton">
               </form>
@@ -95,10 +95,6 @@ include 'app/include/navbar.php';
             </div>
         </div>
     </div>
-        
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-</body>
-</html>
 <?php
 include 'app/include/footer.php';  
 ?>
