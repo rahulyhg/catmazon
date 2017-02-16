@@ -1,0 +1,107 @@
+* {
+  color: #221F1F;
+}
+
+body {
+  padding-top: 65px;
+}
+
+a, option {
+  color: #FF6D9E;
+}
+        
+.secondary-color{
+  color: #FF6D9E;
+}
+
+.btn-info{
+  color: #FF6D9E;
+  background-color: #221F1F;
+  border-color: #191717;
+}
+
+.btn-info:hover{
+  color: #221F1F;
+  background-color: #FF6D9E;
+  border-color: #191717;
+}
+
+/* Used in the sign up page to show a kitty in the jumbo */
+.imaged-jumbo{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  overflow: hidden;
+}
+
+.addAddress-jumbo{
+  position: relative;
+  background: #000 url("/images/signup_cat.jpg") center center;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  overflow: hidden;
+}
+
+.transparent-underlay { 
+   color: #FF6D9E; 
+   letter-spacing: -1px;  
+   background: rgb(34, 31, 31); /* fallback color */
+   background: rgba(34, 31, 31, 0.7);
+   padding: 10px; 
+   border-radius: 5px;
+}
+
+.overlay {
+    background: transparent url("http://i.imgur.com/8B7UFiv.png") repeat;
+    position: absolute;
+    left: 5.5%;
+    top: 0;
+    width: 89%;
+    height: 100%;
+}
+
+.thumb-discounted_price {
+    color: #FF6D9E;
+}
+
+
+.thumb-discount {
+    padding-right: 5px;
+    text-decoration: line-through;
+    color: #221F1F;
+}
+
+#currentPrice {
+    color: #FF6D9E;
+    font-size: 15px;
+}
+
+#discountPrice {
+    padding-right: 10%;
+    text-decoration: line-through;
+    color: #221F1F;
+    font-size: 15px;
+}
+
+.divider-vertical {
+    border-left: 1px dotted rgb(51, 51, 51);     /* right or left is the same */
+}
+
+.divider-horizontal {
+    border-bottom: 1px dotted rgb(51, 51, 51);
+}
+
+.secondary-border-color {
+    border-color: #FF6D9E;
+}
+
+.secondary-hover:hover {
+    color: #FF6D9E;
+    background-color: #221F1F;
+    border-color: #FF6D9E;
+}
+
+
+
