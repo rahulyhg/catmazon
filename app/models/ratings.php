@@ -10,9 +10,16 @@ class ratings extends PDOLayer {
 		PDOLayer::__construct();
 	}
 
-	public function alredyCommented()
+	public function alreadyCommented()
 	{
 		return ($this->where(array('user_id'=>$this->user_id, 'product_id'=>$this->product_id)));
+	}
+
+	public function deleteRating()
+	{
+
+		$stmt = $this->_connection->prepare("DELETE FROM $this->_className WHERE user_id = ? AND product_id = ?");
+        $stmt->execute(array($this->user_id, $this->product_id));
 	}
 }
 

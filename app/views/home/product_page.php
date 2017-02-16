@@ -42,7 +42,7 @@ include 'app/include/navbar.php';
                 <span class="sr-only">Next</span>
             </a>
         </div>
-            
+
             <div id="productPrice" class="col-xs-6 col-md-5">
 <!--                Pretty self explanatory, put product title here -->
                 <strong><p id="productTitle" class="lead"><?=$this->product->title?></p></strong>
@@ -65,19 +65,8 @@ include 'app/include/navbar.php';
                         <a href="#commentSection">Take a look at the Reviews!</a>
                     </span>
                 </div>
-<!--                Here is where you pull the prices.
-                    The logic here is:
-                    
-                    SETS THE LOCALIZATION FOR THE PRICE FORMATTER
-                    
-                    probably a way to do this all easy like in php but idk
-                    IF discount > 0 {
-                        $("#discountPrice").html("CDN<?//=money_format('%.2n', $price);?>")
-                        <?//php $discountedPrice = $price - ($price /100 * $discount);?>
-                        $("#currentPrice").html("CDN<?//=money_format('%.2n', $discountedPrice);?>")
-                    }
--->             
                 <br>
+<!- -                Here is where you pull the prices.-->             
                 <p><?php if ($this->product->discount > 0): ?>
                     <span id="discountPrice">CDN$ <?=number_format((float)$this->product->price, 2, '.', '')?></span>
                 <?php endif ?>
@@ -100,29 +89,19 @@ include 'app/include/navbar.php';
                                         Quantity
                                     </div>
                                     <div>
-                                        <select required id="cost"
-                                    placeholder="Amount" class="form-control" name="addQuantity">
-                                            <option value="1">1</option>
-                                            <option value="1">2</option>
-                                            <option value="1">3</option>
-                                            <option value="1">4</option>
-                                            <option value="1">5</option>
-                                            <option value="1">6</option>
-                                            <option value="1">7</option>
-                                            <option value="1">8</option>
-                                            <option value="1">9</option>
-                                        </select>
+                                        <input style="max-width: 70%"type="number" id="quantity" required class="form-control"   name="addQuantity" min="0" max="<?php if ($this->product->quantity_in_stock > 9): ?>9<?php else: ?><?=$this->product->quantity_in_stock?><?php endif ?>">
+                                        
                                         <input type="text" name="addId" hidden value="<?=$this->productId?>">
                                     </div>
                                 </div>
                             </div>
                             <hr>
 
-                            <button type="submit" class="btn btn-info center-block" name="addBtn" 
-                            <<?php if (isset($_SESSION['activeUser'])): ?>
-                              > Add to <span class="glyphicon glyphicon-shopping-cart" >  
-                            <?php elseif ($this->product->quantity_in_stock == 0): ?>
+                            <button type="submit" class="btn btn-default secondary-color secondary-border-color secondary-hover center-block" name="addBtn" 
+                            <?php if ($this->product->quantity_in_stock == 0): ?>
                                 disabled> Product out of stock.
+                            <?php elseif (isset($_SESSION['activeUser'])): ?>
+                              > Add to <span class="glyphicon glyphicon-shopping-cart secondary-color" >  
                             <?php else: ?>
                                disabled> Log in to add products to your cart.
                             <?php endif ?></span></button>
@@ -181,7 +160,7 @@ include 'app/include/navbar.php';
 <!--                This form should add a rating in accordance to the User's ID and the product found on this page.-->
                     <form id="addCommentForm" action="#" method="POST">
                         <label for="ratingSelectAdd">Select a rating for this product: </label>
-                        <select id="ratingSelectAdd" class="form-control" style="width: auto;" name="selectRating">
+                        <select id="ratingSelectAdd" class="form-control" style="width: auto;" name="selectRating" required>
                             <option value="1">1 &#9733;&#9734;&#9734;&#9734;&#9734;</option>
                             <option value="2">2 &#9733;&#9733;&#9734;&#9734;&#9734;</option>
                             <option value="3">3 &#9733;&#9733;&#9733;&#9734;&#9734;</option>

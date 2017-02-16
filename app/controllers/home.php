@@ -43,8 +43,8 @@ class Home extends Controller {
 
 	}
 
-	public function loadCategories() {
-        $categories = $this->model('categories');
+	public static function loadCategories() {
+        $categories = Controller::model('categories');
 		$category_list = $categories->findAll();
 		$return_string = ''; 
         
@@ -55,9 +55,9 @@ class Home extends Controller {
         return $return_string;
     }
 
-    public function cartCount() {
+    public static function cartCount() {
 		if (isset($_SESSION['activeUser'])){
-			$cart_details = $this->model('cart_details');
+			$cart_details = Controller::model('cart_details');
 			$cart_details = $cart_details->where(array('user_id' => $_SESSION['activeUser']));
 			return (count($cart_details));
 		} else if (isset($_COOKIE["catmazon_anon_cart"])){
@@ -66,7 +66,7 @@ class Home extends Controller {
 		else return 0;
 	}
 
-	public function unsetSearch(){
+	public static function unsetSearch(){
 		unset($_SESSION['filterBy']);
         unset($_SESSION['filterKey']);
         unset($_SESSION['filterByPrice']);
@@ -80,9 +80,9 @@ class Home extends Controller {
         unset($_SESSION["ascOrDesc"]);
 	}
 
-	public function getStarRating($avg_rating){
+	public static function getStarRating($avg_rating){
 		$return = '';
-		if ($avg_rating){
+		if ($avg_rating && $avg_rating >= 1){
             $fullCount=10; 
             $tensrate =  $avg_rating * 10;
             for ($i=0; $i < 5; $i++) { 

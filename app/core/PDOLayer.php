@@ -75,31 +75,6 @@ class PDOLayer{
         return $returnVal;
     }
 
-    // //added function to search for a string in a record AND order by another value
-    // public function whereOrderBy ($assocArray)
-    // {
-    //     $asc = array_pop($assocArray);
-    //     $orderBy = array_pop($assocArray);
-    //     $SQL = $this->_selectAll . ' WHERE ';
-    //     $first = true;
-    //     foreach($assocArray as $key => $value){
-    //         if(!$first)
-    //             $SQL .= 'OR ';
-    //         else
-    //             $first = false;
-    //         $SQL .= "$key LIKE $key ";
-    //     }
-    //     $SQL .= "ORDER BY ".$orderBy. ' ' .$asc;
-    //     $stmt = $this->_connection->prepare($SQL);
-    //     $stmt->execute($assocArray);
-    //     $stmt->setFetchMode(PDO::FETCH_CLASS, $this->_className);
-    //     $returnVal = [];
-    //     while($rec = $stmt->fetch()){
-    //         $returnVal[] = $rec;
-    //     }
-    //     return $returnVal;
-    // }
-
     public function findAll()
     {
         $stmt = $this->_connection->prepare($this->_selectAll);

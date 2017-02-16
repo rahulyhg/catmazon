@@ -158,7 +158,7 @@
                             </div>
                             <br>
                             <input type="hidden" id="editAddressID" name="addressIDEdit">
-                            <input type="hidden" id="editCountry" name="countryEdit">
+                            <!-- <input type="hidden" id="editCountry" name="countryEdit"> -->
                             <div class="input-group input-group-lg">
                                 <label for="city2" class="sr-only">City</label>
                                 <span class="input-group-addon"><span class="glyphicon glyphicon-home secondary-color" title="Enter your birth date"></span></span>
@@ -195,23 +195,6 @@
                         <span class="input-group-addon"><span class="glyphicon glyphicon-globe secondary-color"></span></span>
                         <select id="state" required class="form-control" name="state">
 
-
-                            <!--
-IF country = canaderh
-<option value="AB">Alberta</option>
-<option value="BC">British Columbia</option>
-<option value="MB">Manitoba</option>
-<option value="NB">New Brunswick</option>
-<option value="NL">Newfoundland and Labrador</option>
-<option value="NS">Nova Scotia</option>
-<option value="NT">Northwest Territories</option>
-<option value="NU">Nunavut</option>
-<option value="ON">Ontario</option>
-<option value="PE">Prince Edward Island</option>
-<option value="QC">Quebec</option>
-<option value="SK">Saskatchewan</option>
-<option value="YT">Yukon</option>
--->
                         </select>
                     </div>
                     <br>
@@ -227,11 +210,7 @@ IF country = canaderh
                         <label for="zip" class="sr-only">Zip Code</label>
                         <span class="input-group-addon"><span class="glyphicon glyphicon-home secondary-color"></span></span>
                         <input type="text" pattern="\d{5}(?:[-\s]\d{4})?" required id="zip" placeholder="Zip Code" class="form-control" name="postal_code">
-                        <!--
-IF CANADA
-pattern="[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ] ?[0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]" 
-probably a way to change that in jquery?
--->
+                        
                     </div>
                     <br>
 

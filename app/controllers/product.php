@@ -8,16 +8,20 @@ class product extends Controller {
     public $ratings;
 
     public function index ($id) {
-
         $this->productId = $id;
         $this->product = $this->model('products');
         $this->product = $this->product->find($id);
+        if (isset($_POST['addCommentSubmit']))
+            $this->addComment();
+        if (isset($_POST['deleteCommentBtn']))
+            $this->deleteComment($_POST['deleteCommentBtn']);
+
+ 
+        
+        
         $this->starRating = $this->product->avg_rating;
         $this->ratings = $this->model('ratings');
         $this->ratings = $this->ratings->where(array('product_id'=>$this->productId));
-
-        if (isset($_POST['addCommentSubmit']))
-            $this->addComment();
 
         $this->view('home/product_page');
             home::unsetSearch();
@@ -35,21 +39,23 @@ class product extends Controller {
             $user = $this->model('users');
 
             foreach ($this->ratings as $key => $value) {
-                $user=$user->find($value->user_id);
-                $return.='<div id="comment'.$value->product_id.$value->user_id.'" class="well">
-                            <span id="rating'.$value->product_id.$value->user_id.'">';
-                $return.= home::getStarRating($value->star_rating);
-                $return.= '</span>';
-                
-                if (isset($_SESSION['isAdmin'])) { //if user is an admin, show a delete button
-                    $return.='<form method="POST" action="/product/deleteComment">
-                                 <span><button class="btn btn-default glyphicon glyphicon-remove pull-right" style="color: red; border-color:white;" name="delete_'.$value->product_id.'_'.$value->user_id.'" ></button></span>
-                              </form>';
+                if ($value->comment) {
+                    $user=$user->find($value->user_id);
+                    $return.='<div id="comment'.$value->product_id.$value->user_id.'" class="well">
+                                <span id="rating'.$value->product_id.$value->user_id.'">';
+                    $return.= home::getStarRating($value->star_rating);
+                    $return.= '</span>';
+                    
+                    if (isset($_SESSION['is_admin'])) { //if user is an admin, show a delete button
+                        $return.='<form method="POST" action="#">
+                                     <span><button class="btn btn-default glyphicon glyphicon-remove pull-right" style="color: red; border-color:white;" name="deleteCommentBtn" value="'.$value->user_id.'"></button></span>
+                                  </form>';
+                    }
+                                    
+                    $return.=      '<p><h6>By <span id="'.$value->user_id.'">'.$user->first_name.'</span></h6></p>
+                                    <p id="description'.$value->product_id.$value->user_id.'">'.$value->comment.'</p>
+                                </div>';
                 }
-                                
-                $return.=      '<p><h6>By <span id="'.$value->user_id.'">'.$user->first_name.'</span></h6></p>
-                                <p id="description'.$value->product_id.$value->user_id.'">'.$value->comment.'</p>
-                            </div>';
             }
         }
 
@@ -95,17 +101,78 @@ class product extends Controller {
     public function addComment(){
         $rating = $this->model('ratings');
 
-        $rating->comment = $_POST['commentText'];
+        if (isset($_POST['commentText']))
+            $rating->comment = $_POST['commentText'];
         $rating->product_id = $this->productId;
         $rating->star_rating = $_POST['selectRating'];
         $rating->user_id = $_SESSION['activeUser'];
-        if (!($rating->where(array('user_id'=>$_SESSION['activeUser'],'product_id'=>$this->productId)))){
+
+        if (!($rating->alreadyCommented())){
             $rating->insert();
+            switch ($_POST['selectRating']){
+                case 1: $this->product->one_star = $this->product->one_star +1;
+                break;
+                case 2: $this->product->two_star = $this->product->two_star +1;
+                break;
+                case 3: $this->product->three_star = $this->product->three_star +1;
+                break;
+                case 4: $this->product->four_star = $this->product->four_star +1;
+                break;
+                case 5: $this->product->five_star = $this->product->five_star +1;
+                break;
+            }
+            $this->updateAvgRating();
+
         }
         else {
             $message = "You are only allowed one comment per product";
             echo "<script type='text/javascript'>alert('$message');</script>";
         }  
-        
+
+        //$this->index($this->productId);    
+    }
+
+    public function updateAvgRating()
+    {
+            $count_ratings = $this->model('ratings');
+            $count_ratings = $count_ratings->where(array('product_id'=>$this->productId));
+            if (count($count_ratings != 0)){
+                $rating_list[] = 0;
+                foreach ($count_ratings as $key => $value) {
+                    $rating_list[] = $value->star_rating;
+                }
+                $avg = array_sum($rating_list) / (count($rating_list)-1);
+                $this->product->avg_rating = $avg;
+            } else {
+                $this->product->avg_rating = 0;
+            }
+            $this->product->update();
+    }
+
+    public function deleteComment($userID)
+    {
+        $rating = $this->model('ratings');
+
+        $rating = $rating->where(array('user_id'=>$userID,'product_id'=>$this->productId))[0];
+
+        switch ($rating->star_rating){
+                case 1: $this->product->one_star = $this->product->one_star -1;
+                break;
+                case 2: $this->product->two_star = $this->product->two_star -1;
+                break;
+                case 3: $this->product->three_star = $this->product->three_star -1;
+                break;
+                case 4: $this->product->four_star = $this->product->four_star -1;
+                break;
+                case 5: $this->product->five_star = $this->product->five_star -1;
+                break;
+            }
+
+
+        $rating->deleteRating();
+        $this->updateAvgRating();
+
+        //$this->index;    
+
     }
 }

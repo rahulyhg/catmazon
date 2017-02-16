@@ -2,13 +2,9 @@
 
 class cart extends Controller {
 	private $cart_details;
-	// private $cookieCart;
-	// private static $cookieId = 0;
-
-
+	
 	public function index () {
 		$this->cart_details = $this->model('cart_details');
-		//$this->cookieCart = isset($_COOKIE["catmazon_anon_cart"]) ? json_decode($_COOKIE['catmazon_anon_cart']) : array();
 		if (isset($_COOKIE["catmazon_anon_cart"])){
 		 	echo 'cookie: ';
 		 	print_r(json_decode($_COOKIE['catmazon_anon_cart']));
@@ -30,13 +26,15 @@ class cart extends Controller {
 	}
 
 	public function loadCart() {
+        $this->cart_details = $this->model('cart_details');
 		$items_list = array();
 		$return = '';
 		if (isset($_SESSION['activeUser'])){
 			$items_list = $this->cart_details->where(array('user_id' => $_SESSION['activeUser']));
-		// } else {
-		// 	$items_list = $this->cookieCart;
-		 }
+		} else {
+			return '<h2>Oops! you need to be logged in to have a cart!</h2><br/>
+				<a href="/newUser">Create an account</a> or Login at the top of the page.';
+		}
 		if (!$items_list){
 			$return = '<h4>No items in your cart! Why not add some? Browse our categories:</h4> ';
 			$return .= home::loadCategories();
@@ -58,25 +56,45 @@ class cart extends Controller {
                 
                 $return.='" style="max-width: 100%; class="img-rounded">
 	                </div>
-	                <div class="col-xs-6"><a href="/product'.$product->id.'">
+	                <div class="col-xs-6"><a href="/product/'.$product->id.'">
 	                    <h4 id="title'.$product->id.'">'.$product->title.'</h4></a>
 
 	                    <small>Ships from and sold by <b><span id="brand'.$product->id.'">'.$product->brand.'</span></b></small>
 	                    <br><br>
 	                    <p>';
-            if ($product->discount > 0)
-   				$return .= '<span class="thumb-discount">CDN$ '.number_format((float)$product->price, 2, '.', '').'</span>';
+             if ($product->quantity_in_stock == 0){
+                 $return .= '<b>Out of stock!</b>';
+             } else {
+                if ($product->discount > 0)
+                    $return .= '<span class="thumb-discount">CDN$ '.number_format((float)$product->price, 2, '.', '').'</span>';
 
-            $return .= '<span class="thumb-price">CDN$ '.number_format((float)$product->discounted_price, 2, '.', '').'</span>
-	                </div>
+                $return .= '<span class="thumb-price">CDN$ '.number_format((float)$product->discounted_price, 2, '.', '').'</span>';
+             }
+	               $return .=  '</div>
 	                <div class="col-xs-3">
 	                    <div class="row" style="height:50px;">
 	                        <form action="#" method="POST">
 	                            <div class="input-group">
 	                                <label for="quantity'.$product->id.'" class="sr-only">Quantity of '.$product->id.'</label>
 	                                <span class="input-group-addon">Quantity:</span>
-	                                <input type="number" id="quantity'.$product->id.'" required class="form-control" min="1" max="9" value="'.$value->quantity.'" name="new_qty">
-	                                <span class="input-group-btn">
+	                                <input type="number" id="quantity'.$product->id.'" required class="form-control" min="0" value="';
+            if ($product->quantity_in_stock == 0){
+                 $return .= '0" style="border: 1px solid red;"' ;
+                $value->quantity = 0;
+                $value->update();
+            } else {$return.=$value->quantity;}
+            
+                $return .='" name="new_qty" max=';
+                            
+            if ($product->quantity_in_stock > 9) {
+                        $return .= '9';}
+            else {$return .= $product->quantity_in_stock;}
+            if ($product->quantity_in_stock == 0){
+                 $return .= ' value=0 ';
+            }
+                        $return .='>';
+            
+                            $return .='<span class="input-group-btn">
 	                                	<button type="submit" class="btn btn-default secondary-color pull-right" name="changeQuantity" value="'.$value->id.'"><span class="glyphicon glyphicon-floppy-save"></span></button>
 	                                </span>
 	                            </div>
@@ -97,7 +115,8 @@ class cart extends Controller {
 
 	public function add()
 	{
-		$this->index();
+        $this->cart_details = $this->model('cart_details');
+
 		if (isset($_POST['addBtn'])){
 			$product_id = $_POST['addId'];
 			$quantity = $_POST['addQuantity'];
@@ -107,8 +126,10 @@ class cart extends Controller {
 				$user = $_SESSION['activeUser'];
 				$isInCart = $this->cart_details->where(array('user_id' =>$user,'product_id'=>$product_id));
 				if ($isInCart){
-					$isInCart->quantity ++;
-					return $isInCart->update();
+					$this->cart_details->quantity = $quantity;
+					$this->cart_details->update();
+                    $this->index();
+                    return true;
 				}
 				$this->cart_details->user_id = $user;
 				$this->cart_details->quantity = $quantity;
@@ -130,6 +151,7 @@ class cart extends Controller {
                 echo "<script type='text/javascript'>alert('$message');</script>";
 				}
 		}
+		$this->index();
 	}
 	
 	public function updateQty($id, $qty)
@@ -156,15 +178,6 @@ class cart extends Controller {
 	{
 		if (isset($_SESSION['activeUser'])){
 			$this->cart_details->find($id)->delete();
-		// } else {
-		// 	foreach ($this->cookieCart as $key => $val) {
-		//       	if($val["id"] === $id) {
-		//             unset($this->cookieCart[$val]);
-		//             break;    
-		//         } 
-		//     } 
-		//     $cookie_contents = json_encode($this->cookieCart); 
-		//     $_COOKIE['catmazon_anon_cart'] = $cookie_contents;
 		}
 
 	}

@@ -50,14 +50,14 @@ class inventory extends Controller {
                     <div class="panel-body">
                         <div class="row ">
                             <div class="col-xs-6">
-                                <div class="panel panel-default">
+                                <div class="panel panel-default secondary-border-color">
                                     <div class="panel-body">
                                         <h4><b>Modify quantity</b></h4>
                                         <form action="/inventory/editItem/'.$itemId.'" method="POST">
                                             <div class="input-group">
                                                 <input type="number" class="form-control" placeholder="Enter a new quantity" name="quantity" id="prodQuantity" value="'.$qos.'">
                                                 <div class="input-group-btn">
-                                                    <button class="btn btn-default" type="submit" name="chgQtySubmit"><span class="glyphicon glyphicon-floppy-disk"></span></button>
+                                                    <button class="btn btn-default secondary-border-color secondary-hover" type="submit" name="chgQtySubmit"><span class="glyphicon glyphicon-floppy-disk secondary-color"></span></button>
                                                 </div>
                                             </div>
                                         </form>
@@ -65,16 +65,16 @@ class inventory extends Controller {
                                 </div>
                             </div>
                             <div class="col-xs-6">
-                                <div class="panel panel-default">
+                                <div class="panel panel-default secondary-border-color">
                                     <div class="panel-body">
                                         <h4><b>Modify Product Discount</b></h4>
-                                        <form action="/inventory" method="POST">
+                                        <form action="/inventory/editItem/'.$itemId.'" method="POST">
                                             <div class="input-group">
                                                 <input type="number" pattern="[1-9]?\d\.\d{4}" step="any" required id="discount"
                                 placeholder="Discount (xx.xx%)" value="'.$value->discount.'" class="form-control" name="discount">
                                                 <div class="input-group-addon">%</div>
                                                 <div class="input-group-btn">
-                                                    <button class="btn btn-default" type="submit" name="addDiscountSubmit"><span class="glyphicon glyphicon-floppy-disk"></span></button>
+                                                    <button class="btn btn-default secondary-border-color secondary-hover" type="submit" name="addDiscountSubmit"><span class="glyphicon glyphicon-floppy-disk secondary-color"></span></button>
                                                 </div>
                                             </div>
                                         </form>
@@ -83,7 +83,7 @@ class inventory extends Controller {
                             </div>
                         </div>
                         <br>
-                        <div class="panel panel-default">
+                        <div class="panel panel-default secondary-border-color">
                             <div class="panel-body">
                                 <h4><b>Modify Product Information</b></h4>
                                 <form action="/inventory/editItem/'.$itemId.'" method="POST">
@@ -115,23 +115,24 @@ class inventory extends Controller {
                                       </div>
                                     </div>
                                     <input type="text" hidden value = "'.$itemId.'" name="editId" />
-                                    <input type="submit" value="Accept Modifications" class="form-control " name="editProductSubmit">
+                                    <input type="submit" value="Accept Modifications" class="form-control secondary-color secondary-border-color secondary-hover" name="editProductSubmit">
                                 </form>
                             </div>
                         </div>
-                        <div class="panel panel-default">
+                        <div class="panel secondary-border-color panel-default">
                             <div class="panel-body">
                                 <h4 id="del"><b>Add image</b></h4>
                                 <form action="/inventory/addImage" method="post" enctype="multipart/form-data">
+                                    <p>Be warned, file limit is set to 75KB per image.</p>
                                     <label for="image"></label>
                                     <input type="hidden" name="getID" value="'.$itemId.'">
-                                    <input type="file" name="image" accept="image/*">
-                                    <input type="submit" name="addImageButton" id="addImageButton" value="Add Picture">
+                                    <input type="file" class="col-xs-6" name="image" accept="image/*">
+                                    <input type="submit" name="addImageButton" id="addImageButton" class="btn btn-danger secondary-border-color secondary-hover" value="Add Picture">
                                 </form>
                                 <hr>
                             </div>
                         </div>
-                        <div class="panel panel-default">
+                        <div class="panel panel-default secondary-border-color">
                             <div class="panel-body">
                                 <h4 id="del"><b>Delete Images</b></h4>
                                 <ul class="list-unstyled">'.$this->loadImages($itemId).'
@@ -154,20 +155,30 @@ class inventory extends Controller {
 
     public function addImage(){
         if(isset($_POST['addImageButton'])){
-            if(getimagesize($_FILES['image']['tmp_name'])){
-                $image= addslashes($_FILES['image']['tmp_name']);
-                $name= addslashes($_FILES['image']['name']);
-                $image = file_get_contents($image);
-                $image = base64_encode($image);
+            if ($_FILES['image']['size'] == 0){
+                $message = 'Please choose an image.';
+                echo "<script type='text/javascript'>alert('$message');</script>";
+            } else {
+                if($_FILES['image']['size'] > 75000){
+                    $message = 'The image was too big, maximum upload size is 75KB.';
+                    echo "<script type='text/javascript'>alert('$message');</script>";
+                } else { 
+                    if(getimagesize($_FILES['image']['tmp_name'])){
+                        $image= addslashes($_FILES['image']['tmp_name']);
+                        $name= addslashes($_FILES['image']['name']);
+                        $image = file_get_contents($image);
+                        $image = base64_encode($image);
+                    }
+                    $id = $_POST['getID'];
+
+                    $images = $this->model('images');
+                    $images->product_id = $id;
+                    $images->name = $name;
+                    $images->image = $image;
+                    $images->insert();
+                }
             }
-
-            $id = $_POST['getID'];
-
-            $images = $this->model('images');
-            $images->product_id = $id;
-            $images->name = $name;
-            $images->image = $image;
-            $images->insert();
+            
         }
         $this->view('admin/inventory');     
     }
@@ -243,7 +254,6 @@ class inventory extends Controller {
         }
         if (isset($_POST['addDiscountSubmit'])){
             $product->discount = $_POST['discount'];
-
         }
         if (isset($_POST['chgQtySubmit'])){
             $product->quantity_in_stock = $_POST['quantity'];

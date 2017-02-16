@@ -28,6 +28,7 @@ include 'app/include/navbar.php';
             
         </div> 
     </div>
+<?php if (isset($_SESSION['activeUser'])): ?>
     <div class="col-xs-3 sidebar-outer">
         <div class="panel panel-default sidebar text-center">
             <div class="panel-heading">
@@ -56,6 +57,7 @@ include 'app/include/navbar.php';
             </div>
         </div>
     </div>
+<?php endif?>
 
 </body>
 
